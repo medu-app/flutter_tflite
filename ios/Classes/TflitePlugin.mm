@@ -489,7 +489,15 @@ void runModelOnImage(NSDictionary* args, FlutterResult result) {
     const unsigned long output_size = labels.size();
     const int num_results = [args[@"numResults"] intValue];
     const float threshold = [args[@"threshold"] floatValue];
-    return result(output);
+      
+    NSMutableArray *array = [[NSMutableArray alloc] init];
+    for (int i = 0; i < [output count]; i++)
+    {
+        NSNumber *num = [NSNumber numberWithFloat:[output objectAtIndex:i]];
+        [array addObject:num];
+    }
+    
+    return result(array);
   });
 }
 
