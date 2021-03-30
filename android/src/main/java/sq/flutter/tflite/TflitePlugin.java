@@ -298,6 +298,21 @@ public class TflitePlugin implements MethodCallHandler {
 
     return recognitions;
   }
+  
+  private List<Map<String, Object>> GetResList(int numResults, float threshold) {
+    ArrayList<Map<String,Object>> recognitions = new ArrayList<>();
+
+    for(int i = 0; i < labels.size(); ++i) {
+      float confidence = labelProb[0][i];
+      Map<String, Object> res = new HashMap<>();
+      res.put("index", i);
+      res.put("label",labels.size() > i ? labels.get(i) : "unknown");
+      res.put("confidence", confidence);
+      recognitions.add(res);
+    }
+
+    return recognitions;
+  }
 
   Bitmap feedOutput(ByteBuffer imgData, float mean, float std) {
     Tensor tensor = tfLite.getOutputTensor(0);
@@ -506,7 +521,7 @@ public class TflitePlugin implements MethodCallHandler {
 
     protected void onRunTfliteDone() {
       Log.v("time", "Inference took " + (SystemClock.uptimeMillis() - startTime));
-      result.success(GetTopN(NUM_RESULTS, THRESHOLD));
+      result.success(GetResList(NUM_RESULTS, THRESHOLD));
     }
   }
 
